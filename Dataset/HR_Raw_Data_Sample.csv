@@ -1,0 +1,8 @@
+EmployeeID,Name,Department,Role,HireDate,TerminationDate,AttritionStatus,MonthlySalary,OvertimeHours,PerformanceRating
+EMP001,Rajesh Kumar,Sales,Sales Executive,2022-01-15,,No,45000,12,3
+EMP002,Anitha Reddy,Technology,Software Engineer,2021-06-10,2024-03-15,Yes,85000,25,4
+EMP003,Srinivas Rao,HR,HR Manager,2020-11-01,,No,70000,5,3
+EMP004,Priya Sharma,Technology,QA Engineer,2023-02-20,,No,60000,8,2
+EMP005,Venkatesh Naik,Sales,Account Manager,2022-05-18,2025-01-10,Yes,50000,18,3
+EMP006,Kavitha Joshi,HR,Recruiter,2024-01-05,,No,40000,2,4
+EMP007,Ravi Teja,Technology,Data Analyst,2022-08-12,,No,65000,15,5
