@@ -1,0 +1,106 @@
+-- =========================================================================
+-- Project Name: HR Analytics Dashboard
+-- Description: Employee attrition, salary distribution, and workforce utilization analysis.
+-- Tools Used: SQL, Power BI, Excel
+-- File: hr_analytics_queries.sql
+-- =========================================================================
+
+-- 1. DATABASE & TABLE SETUP
+-- Creating the table based on the schema visible in HR_Raw_Data_Sample
+
+CREATE TABLE HR_Raw_Data_Sample (
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Role VARCHAR(100),
+    Department VARCHAR(50),
+    MonthlySalary INT,
+    AttritionStatus VARCHAR(20),
+    HireDate DATE,
+    OvertimeHours INT,
+    PerformanceRating INT,
+    TerminationDate DATE
+);
+
+-- Inserting sample data reflecting the records shown in the dashboard image
+INSERT INTO HR_Raw_Data_Sample 
+(EmployeeID, Name, Role, Department, MonthlySalary, AttritionStatus, HireDate, OvertimeHours, PerformanceRating, TerminationDate)
+VALUES 
+(1, 'Kavitha Joshi', 'Recruiter', 'HR', 40000, 'Active', '2023-01-15', 5, 4, NULL),
+(2, 'Srinivas Rao', 'HR Manager', 'HR', 70000, 'Active', '2022-06-10', 8, 5, NULL);
+
+
+-- =========================================================================
+-- 2. DASHBOARD KPI & VISUALIZATION QUERIES
+-- =========================================================================
+
+-- KPI 1: Total Employees Count
+-- Replicates the 'Total Employees' card visual (Count of EmployeeID)
+SELECT 
+    COUNT(EmployeeID) AS Total_Employees
+FROM 
+    HR_Raw_Data_Sample;
+
+
+-- KPI 2: Average Monthly Salary
+-- Replicates the 'Average Monthly Salary' card visual (55.00K)
+SELECT 
+    ROUND(AVG(MonthlySalary), 2) AS Average_Monthly_Salary
+FROM 
+    HR_Raw_Data_Sample;
+
+
+-- Visual 3: Salary Distribution and Total Spending by Department
+-- Supports the 'Salary by Department' Bar Chart and 'Department Salary Distribution' Pie Chart
+SELECT 
+    Department,
+    SUM(MonthlySalary) AS Total_Salary_Spent,
+    ROUND(AVG(MonthlySalary), 2) AS Avg_Salary_Per_Dept,
+    ROUND((SUM(MonthlySalary) * 100.0 / (SELECT SUM(MonthlySalary) FROM HR_Raw_Data_Sample)), 2) AS Salary_Percentage_Share
+FROM 
+    HR_Raw_Data_Sample
+GROUP BY 
+    Department;
+
+
+-- Visual 4: Employee Details Table
+-- Replicates the main 'Employee Details' grid view on the dashboard
+SELECT 
+    Name,
+    Role,
+    Department,
+    MonthlySalary
+FROM 
+    HR_Raw_Data_Sample
+ORDER BY 
+    MonthlySalary DESC;
+
+
+-- =========================================================================
+-- 3. ADVANCED BUSINESS INSIGHT QUERIES (For HR Leadership Reporting)
+-- =========================================================================
+
+-- Metric: Attrition Rate Analysis
+-- Calculates workforce loss percentages across different roles and departments
+SELECT 
+    Department,
+    COUNT(EmployeeID) AS Total_Hires,
+    SUM(CASE WHEN AttritionStatus = 'Terminated' THEN 1 ELSE 0 END) AS Total_Left,
+    ROUND((SUM(CASE WHEN AttritionStatus = 'Terminated' THEN 1 ELSE 0 END) * 100.0 / COUNT(EmployeeID)), 2) AS Attrition_Rate
+FROM 
+    HR_Raw_Data_Sample
+GROUP BY 
+    Department;
+
+
+-- Metric: Overtime and Performance Utilization Tracking
+-- Helps HR analyze if high overtime hours correlate with high performance ratings
+SELECT 
+    Role,
+    AVG(OvertimeHours) AS Avg_Overtime_Hours,
+    AVG(PerformanceRating) AS Avg_Performance_Rating
+FROM 
+    HR_Raw_Data_Sample
+GROUP BY 
+    Role
+ORDER BY 
+    Avg_Performance_Rating DESC;
